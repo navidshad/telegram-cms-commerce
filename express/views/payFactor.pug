@@ -1,0 +1,30 @@
+extends layout
+
+block content
+
+  div.flex-center
+    div.block.w3-mobile
+    
+      div(class="w3-container")
+        h2=title
+        
+      div(class="w3-container")
+        .text.space
+          each paragraph in description
+            p=paragraph
+          
+          div.rules
+            h5 قوانین پرداخت و خرید
+            ul
+              each rule in rules
+                li=rule
+          
+        .space
+          input#userid.w3-input.w3-border.space(name="text", placeholder='شماره کاربری')
+          input#factorid.w3-input.w3-border.space(name="text", placeholder='شناسه فاکتور')
+              
+          button#pay.space(class="w3-button w3-round-large w3-border w3-red w3-block") خرید
+
+
+block script
+  script(src="/js/pay_factor.js")
