@@ -72,7 +72,12 @@ var addToBag = async function(userid, type, productid, datas)
 var submitBag = async function(userid)
 {
     var userBag = await get(userid);
-    if(!userBag.address.length && !userBag.phone && !userBag.fullname)
+    var contactInfo = fn.getModuleData('commerce', 'contactInfo').value;
+    
+    let allowCintactInfo = true;
+    if(contactInfo == 'false') allowCintactInfo = false;
+    
+    if(allowCintactInfo && !userBag.address.length && !userBag.phone && !userBag.fullname)
     {
         global.fn.sendMessage(userid, 'لطفا ابتدا نام کامل، آدرس و شماره تلفن خود را وارد کنید.');
         show(userid, userBag);
@@ -110,14 +115,19 @@ var getView_main = function(coupons)
     var fn_fullname = query['commerce'] + '-' + query['user'] + '-' + query['fullname'];
     var fn_showPostalInfo = query['commerce'] + '-' + query['user'] + '-' + query['postalInfo'];
 
-    detailArr.push([ 
-        {'text': '🏠' + 'آدرس', 'callback_data': fn_address},
-        {'text': '📱' + 'موبایل', 'callback_data': fn_phone},
-        {'text': '👤' + 'نام کامل', 'callback_data': fn_fullname},
-    ]);
+    // contact info
+    var contactInfo = fn.getModuleData('commerce', 'contactInfo').value;
+    if(contactInfo == 'true')
+    {
+         detailArr.push([ 
+            {'text': '🏠' + 'آدرس', 'callback_data': fn_address},
+            {'text': '📱' + 'موبایل', 'callback_data': fn_phone},
+            {'text': '👤' + 'نام کامل', 'callback_data': fn_fullname},
+        ]);
 
-    detailArr.push([{'text': '👤📱🏠' + 'نمایش', 'callback_data': fn_showPostalInfo}]);
-
+        detailArr.push([{'text': '👤📱🏠' + 'نمایش', 'callback_data': fn_showPostalInfo}]);
+    }
+    
     //close
     detailArr.push([
         {'text': '❌ ' + 'تخلیه سبد', 'callback_data': fn_clear},

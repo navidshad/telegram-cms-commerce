@@ -113,6 +113,15 @@ module.exports.commerce =
             'name'  : 'کلید api نکست پی',
             'mess'  : 'لطفا کلید api درگاه نکست پی را ارسال کنید.',
         },
+        
+        contactInfo: {
+            name: 'اطلاعات تماس سبد خرید',
+            mess: 'آیا شما مایل هستید اطلاعات تماس در بخش سبد خرید از کاربر دریافت شود?',
+            items : [
+                {'name': 'true', 'lable':'فعال'},
+                {'name': 'false', 'lable':'غیر فعال'},
+            ]
+        },
 
         shipping: {
             name: 'حمل و نقل',
