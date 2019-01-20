@@ -27,9 +27,9 @@ router.post('/nextpay', async (req, res, next) =>
 
     //validate purchase
     var validate = await global.fn.m.commerce.gates.nextpay
-    .VerifyPayment(body.trans_id, body.order_id, nextpaySession.amount, nextpayapikey);
-    console.log('validate', validate);
-    var code = validate.PaymentVerificationResult.code; 
+        .VerifyPayment(body.trans_id, body.order_id, nextpaySession.amount, nextpayapikey);
+    //console.log('validate', validate);
+    var code = validate[0].PaymentVerificationResult.code; 
 
     //not purched
     if(code !== 0){
@@ -41,6 +41,12 @@ router.post('/nextpay', async (req, res, next) =>
     var factor = await global.fn.db.factor.findOne({'number':body.order_id}).exec().then();
     global.fn.m.commerce.user.factor.getPaied(factor.userid, factor.id);
     res.send('پرداخت با موفقیت انجام شد.');
+});
+
+router.get('/nextpay', async (req, res, next) =>
+{
+    console.log('a request to nextpay callback');
+    res.send('باید از درگاه بانکی به این صفحه منتقل شوید.');
 });
 
 module.exports = router;
