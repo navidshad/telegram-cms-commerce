@@ -77,11 +77,14 @@ let create = async function(userid,  items, optionPram)
 
     //get total amount and titles
     let totalAmount = 0;
+    let productPrice = 0;
     let titles = '';
     updatedBagitems.forEach(item => { 
-        totalAmount += item.price;
+        productPrice += item.price;
         titles += '\n' + item.name;
     });
+    
+    totalAmount += productPrice;
 
     //perform coupon
     let totalPerDis = 0;
@@ -89,23 +92,28 @@ let create = async function(userid,  items, optionPram)
     totalPerDis = DisResult.total;
     let removeids = DisResult.usedcoupons.map(item => { return item.id });
     fn.m.commerce.coupon.removeCoupon(removeids);
-
+    
+    let finalPrice = (totalPerDis) ? totalPerDis : totalAmount;
+    
     // shipping -----------
     let shippingOption = fn.getModuleData('commerce', 'shipping').value;
     let shippingCost = fn.getModuleData('commerce', 'shippingCost').value;
     let shippingLable = `\n 🚚 هزینه ارسال: ${shippingCost} تومان`;
-    if(shippingOption == 'true') totalAmount += parseInt(shippingCost);
+    if(shippingOption == 'true') finalPrice += parseInt(shippingCost);
     // --------------------
-    
     
     //prepare messag
     let mess = '🛍 ' + 'فاکتور شماره ' + newNumber + '\n' +
     '<code>ـــــــــــــــــ' +
     titles + '\n' +
     'ـــــــــــــــــ' + '\n' +
-    'جمع قیمت: ' + totalAmount + ' تومان' + '</code> \n';
-    //mess += (totalPerDis) ? '💶 ' + 'تخفیف: ' + totalPerDis + ' تومان' : '';
-    //mess += (shippingOption == 'true') ? shippingLable : '';
+    'قیمت محصولات: ' + productPrice + ' تومان' + '</code>';
+    
+    mess += (shippingOption == 'true') ? shippingLable + '\n' : '';
+    mess += (totalPerDis) ? '💶 ' + 'تخفیف: ' + DisResult.amount + ' تومان'+ '\n' : '';
+    
+    mess += 'جمع قیمت: ' + finalPrice + ' تومان';
+    
 
     //create
     let newFactor = await new fn.db.factor({
@@ -114,8 +122,7 @@ let create = async function(userid,  items, optionPram)
         'date'      : fn.time.gettime(),
         'desc'      : mess,
         'products'  : updatedBagitems,
-        'amount'    : totalAmount,
-        'discount'  : totalPerDis,
+        'amount'    : finalPrice,
     }).save().then();
     
     fn.m.commerce.user.bag.clear(userid);
@@ -233,8 +240,9 @@ let showFactor = async function(userid,  option)
         detailArr.push(firstRow);
 
         //gates buttons
-        let price = (factor.discount) ? factor.discount : factor.amount;
+        let price = factor.amount;
         let nextpaylink = await fn.m.commerce.gates.nextpay.getPaylink(factor.number, price);
+        console.log(`get paylink for | factor:${factor.number} price:${price}|`);
         detailArr.push([{'text': 'پرداخت با نکست پی', 'url': nextpaylink}]);
     }
     

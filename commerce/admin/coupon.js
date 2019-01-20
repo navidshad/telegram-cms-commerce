@@ -155,7 +155,7 @@ var getUsedCouponsDetail = function(usedcoupons)
 var performCoupon = async function(userid, total, totalitems, cid)
 {
     // get automatics and the custom
-    var result = {total: 0, usedcoupons: []}
+    var result = {total: 0, amount:0, usedcoupons: []}
     var coupons = await fn.db.coupon.find({'userid': userid, 'consumptionway':'automatic'}).exec().then();
     var customcoupon = await getcoupon(cid);
     if(customcoupon) coupons.push(customcoupon);
@@ -164,7 +164,7 @@ var performCoupon = async function(userid, total, totalitems, cid)
     
     // perform coupons wich their createtime are 'buying'
     var buyingcoupons = await fn.db.generator.find({'createtime': 'buying', 'mode':'buy'}).exec().then();
-    console.log()
+
     for(i=0; i < buyingcoupons.length; i++)
     {
         const generator = buyingcoupons[i];
@@ -183,13 +183,18 @@ var performCoupon = async function(userid, total, totalitems, cid)
             newtotal = finaltotal - generator.amount;
             if(newtotal < 100) newtotal = 100;
             detail.name = generator.amount + ' تومان';
+            
+            result.amount += generator.amount;
         }
         //percent
         else if(generator.discountmode == 'percent')
         {
-            newtotal = finaltotal - ((finaltotal / 100) * generator.percent);
+            var disAmount = ((finaltotal / 100) * generator.percent);
+            newtotal = finaltotal - disAmount;
             if(newtotal < 100) newtotal = 100;
             detail.name = generator.percent + ' درصد';
+            
+            result.amount += disAmount;
         }
         
         finaltotal = newtotal;
@@ -208,13 +213,18 @@ var performCoupon = async function(userid, total, totalitems, cid)
             newtotal = finaltotal - coupon.amount;
             if(newtotal < 100) newtotal = 100;
             detail.name = coupon.amount + ' تومان';
+            
+            result.amount += coupon.amount;
         }
         //percent
         else if(coupon.discountmode == 'percent')
         {
-            newtotal = finaltotal - ((finaltotal / 100) * coupon.percent);
+            var disAmount = ((finaltotal / 100) * coupon.percent);
+            newtotal = finaltotal - disAmount;
             if(newtotal < 100) newtotal = 100;
             detail.name = coupon.percent + ' درصد';
+            
+            result.amount += disAmount;
         }
 
         finaltotal = newtotal;

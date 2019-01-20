@@ -182,6 +182,16 @@ var show = async function(userid, bag,  optionparam)
         total += item.price;
         totalitems++;
     });
+    
+    // shipping -----------
+    var shippingOption = fn.getModuleData('commerce', 'shipping').value;
+    var shippingCost = fn.getModuleData('commerce', 'shippingCost').value;
+    var shippingLable = `\n🚚 هزینه ارسال: ${shippingCost} تومان` + '\n';
+    if(shippingOption == 'true') {
+        var shippingCost = fn.getModuleData('commerce', 'shippingCost').value;
+        shippingCost = parseInt(shippingCost);
+    }
+    // --------------------
 
     //perform coupon
     var totalPerDis = 0;
@@ -194,16 +204,6 @@ var show = async function(userid, bag,  optionparam)
 
     var usedcouponsText = fn.m.commerce.coupon.getUsedCouponsDetail(DisResult.usedcoupons);
 
-    // shipping -----------
-    var shippingOption = fn.getModuleData('commerce', 'shipping').value;
-    var shippingCost = fn.getModuleData('commerce', 'shippingCost').value;
-    var shippingLable = `\n🚚 هزینه ارسال: ${shippingCost} تومان`;
-    if(shippingOption == 'true') {
-        var shippingCost = fn.getModuleData('commerce', 'shippingCost').value;
-        shippingCost = parseInt(shippingCost);
-    }
-    // --------------------
-
     var finalprice = totalPerDis + (shippingCost || 0);
 
     //message
@@ -211,9 +211,9 @@ var show = async function(userid, bag,  optionparam)
     '<code>ـــــــــــــــــ</code>' +
     titles + '\n' +
     '<code>ـــــــــــــــــ</code>' + '\n' +
-    '📊 ' + 'جمع قیمت: ' + total + ' تومان' + '\n';
-    mess += (totalPerDis  ==  total) ? '' :  '🎁 ' + 'اعمال تخفیف: ' + totalPerDis + ' تومان';
+    '📊 ' + 'جمع قیمت: ' + total + ' تومان';
     mess += (shippingOption == 'true') ? shippingLable : '';
+    mess += (totalPerDis  ==  total) ? '' :  '🎁 ' + 'اعمال تخفیف: ' + DisResult.amount + ' تومان';
     mess += '\n💶 ' + 'جمع کل: ' + finalprice + ' تومان';
     mess += '\n' + '<code>ـــــــــــــــــ</code>' + '\n' +
     '⏰ وضعیت تخفیف ها:\n' +

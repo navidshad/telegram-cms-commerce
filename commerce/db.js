@@ -33,7 +33,7 @@ module.exports.createModels = function(mongoose)
         'desc'      : String,
         'products'  : [bagitem],
         'amount'    : Number,
-        'discount'  : Number,
+        //'discount'  : Number,
         'shipping'  : {type:Number, default:0},
         'message_id': Number,
         'chatid'    : Number,
