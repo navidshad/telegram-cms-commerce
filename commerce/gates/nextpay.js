@@ -49,7 +49,7 @@ var getPaylink = async function(fnumber, amount)
     return await GetToken(fnumber, amount, nextpayapikey)
     .then(async (result) => 
     {
-        var TokenGeneratorResult = result.TokenGeneratorResult;
+        var TokenGeneratorResult = result[0].TokenGeneratorResult;
 
         //return fake url
         if(TokenGeneratorResult.code !== -1) {
