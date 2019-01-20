@@ -70,6 +70,8 @@ module.exports.commerce =
         activation  :'activate',
         category    :'catry',
         order       :'order',
+        
+        refreshLink :'rlk',
     },
 
     mess : {

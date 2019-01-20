@@ -174,6 +174,12 @@ var query = async function(query, speratedQuery, user)
     {
         fn.db.factor.remove({'_id':speratedQuery[last]}).exec();
     }
+    
+    // refresh factor
+    else if(speratedQuery[2] === querytag['refreshLink']) 
+    {
+        factor.showFactor(userid, {'id':speratedQuery[last]});
+    }
 
     //show coupon list
     else if (speratedQuery[2] === querytag['usecoupon'])
