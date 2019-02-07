@@ -2,8 +2,12 @@ var express = require('express');
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.get('/:id', async function(req, res, next)
+{
+  var params = req.params
+  var user = await global.fn.db.user.findOne({'userid': params.id}).exec().then();
+  let isSubscribe = (user) ? true : false;
+  res.send({'isSubscriber': isSubscribe});
 });
 
 module.exports = router;

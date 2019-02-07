@@ -163,7 +163,7 @@ let getPaied = async function(userid,  fid)
     // });
     
     //analytic
-    fn.m.analytic.trackTransaction(userid, factor.number, factor.amount);
+    fn.m.analytic.trackItem(userid, factor.number, factor.amount);
 }
 
 let sendPaymentMessage = async function(userid,  productid)
