@@ -243,19 +243,48 @@ let showFactor = async function(userid,  option)
         detailArr.push(firstRow);
 
         //gates buttons
-        let price = factor.amount;
-        let nextpaylink = await fn.m.commerce.gates.nextpay.getPaylink(factor.number, price);
-        console.log(`get paylink for | factor:${factor.number} price:${price}|`);
-        detailArr.push([{'text': 'پرداخت با نکست پی', 'url': nextpaylink}]);
+        // let price = factor.amount;
+        // let nextpaylink = await fn.m.commerce.gates.nextpay.getPaylink(factor.number, price);
+        // console.log(`get paylink for | factor:${factor.number} price:${price}|`);
+        // detailArr.push([{'text': 'پرداخت با نکست پی', 'url': nextpaylink}]);
     }
     
     mess += '\n\n' + fn.mstr['commerce'].mess.nexpayNote;
     
     //sned
-    global.fn.sendMessage(userid, mess, {
+    let msg = await global.fn.sendMessage(userid, mess, {
         'parse_mode':'HTML',
         "reply_markup" : {"inline_keyboard" : detailArr}
-    }).then((msg) => { });
+    });
+
+    if(!factor.ispaid) getPayLinks(msg, factor, detailArr);
+}
+
+async function getPayLinks(msg, factor, detailArr)
+{
+    // get idpay link
+    let idPayLink = await fn.m.commerce.gates.idpay.getPaylink(factor);
+    if(idPayLink) addPayButtons('پرداخت با ایدی پی', idPayLink, detailArr, msg);
+
+    // get nextpay link
+    let price = factor.amount;
+    let nextpaylink = await fn.m.commerce.gates.nextpay.getPaylink(factor.number, price);
+    if(nextpaylink) addPayButtons('پرداخت با نکست پی', nextpaylink, detailArr, msg);
+
+    // console.log(`get paylink for | factor:${factor.number} price:${price}|`);
+    // detailArr.push([{'text': 'پرداخت با نکست پی', 'url': nextpaylink}]);
+}
+
+function addPayButtons(lable, link, detailArr, msg)
+{
+    detailArr.push([{'text': lable, 'url': link}]);
+    fn.editMessageReplyMarkup(
+        {"inline_keyboard" : detailArr}, 
+        {
+            'chat_id'   : msg.chat.id,
+            'message_id': msg.message_id,
+        }
+    );
 }
 
 let routting = function(message, speratedSection, user)

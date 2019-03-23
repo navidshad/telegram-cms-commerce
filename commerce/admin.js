@@ -119,6 +119,7 @@ var coupon  = require('./admin/coupon');
 var couponGenerator = require('./admin/couponGenarator');
 var gates = {
     'nextpay': require('./gates/nextpay'),
+    'idpay' : require('./gates/idpay'),
 }
 
 module.exports = { name, checkRoute, routting, query, show, user, gates, 

@@ -16,7 +16,7 @@ router.get('/', function(req, res, next)
   res.render('payFactor', detail);
 });
 
-router.post('/buyfactor', async (req, res, next) =>
+router.post('/getDetail', async (req, res, next) =>
 {
   let result = {};
   let body = req.body;
@@ -27,7 +27,7 @@ router.post('/buyfactor', async (req, res, next) =>
   if(isNaN(userid)) userid = 0;
   if(isNaN(factorid)) factorid = 0;
   
-  console.log(body);
+  //console.log(body);
   
   // check userid
   let usercount = await global.fn.db.user.count({'userid': userid}).exec().then();
@@ -46,8 +46,54 @@ router.post('/buyfactor', async (req, res, next) =>
   }
   
   else {
-    let nextpaylink = await fn.m.commerce.user.factor.getPayLink(factor);
-    result = {'status':'success', 'link': nextpaylink};
+    result = {
+      'status':'success', 
+      'factor': factor, 
+      'getways': [
+        {'lable':'ایدی پی', 'name':'idpay'},
+        {'lable':'نکست پی', 'name':'nextpay'},
+      ],
+    };
+    res.send(result);
+  }
+});
+
+router.post('/getPaylink', async (req, res, next) =>
+{
+  let result = {};
+  let body = req.body;
+  
+  let factorid = parseInt(body.factorid);
+  let getway = body.getway;
+
+  let factor = await global.fn.db.factor.findOne({'number': factorid}).exec().then();
+
+  if (!factor)
+  {
+    result = {'status':'fail', 'message': 'شناسه فاکتور اشتباه است'};
+    res.send(result);
+  }
+  else if(!getway)
+  {
+    result = {'status':'fail', 'message': 'پرامتر getway باید صحیح باشد.'};
+    res.send(result);
+  }
+  else {
+    result = {'status':'success', 'link': null};
+
+    switch (getway) 
+    {
+      case 'idpay':
+        let idPayLink = await fn.m.commerce.gates.idpay.getPaylink(factor);
+        result.link = idPayLink;
+        break;
+    
+      case 'nextpay':
+        let nextpaylink = await fn.m.commerce.gates.nextpay.getPaylink(factor.number, factor.amount);
+        result.link = nextpaylink;
+        break;
+    }
+
     res.send(result);
   }
 });

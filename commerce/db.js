@@ -85,6 +85,15 @@ module.exports.createModels = function(mongoose)
         'trans_id'  : String,
         'code'      : String,
     });
+
+    var idpaySchema = new Schema({
+        status      : Number,
+        track_id    : Number,
+        id          : String,
+        order_id    : String,
+        Date        : Date,
+        link        : String,
+    });
     
     var fNumberSchema = new Schema({
         'last': {'type': Number, default: 100}
@@ -99,6 +108,7 @@ module.exports.createModels = function(mongoose)
     models.gentemp      = mongoose.model('couponGenaratorsTemp', generatorTempSchema);
     
     models.nextpay  = mongoose.model('nextpay', nextpaySchema);
+    models.idpay  = mongoose.model('idpay', idpaySchema);
     
     return models;
 }

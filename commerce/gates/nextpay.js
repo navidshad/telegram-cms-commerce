@@ -69,7 +69,7 @@ var getPaylink = async function(fnumber, amount)
     .catch(e => 
     {
         console.log(e);
-        return 'https://api.nextpay.org/gateway/payment/***';
+        return null;
     });
 }
 module.exports = { VerifyPayment, getPaylink }

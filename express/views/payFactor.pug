@@ -13,17 +13,23 @@ block content
           each paragraph in description
             p=paragraph
           
-          div.rules
+          div.border
             h5 قوانین پرداخت و خرید
             ul
               each rule in rules
                 li=rule
           
-        .space
+        #inputs(class="space")
           input#userid.w3-input.w3-border.space(name="text", placeholder='شماره کاربری')
           input#factorid.w3-input.w3-border.space(name="text", placeholder='شناسه فاکتور')
               
           button#pay.space(class="w3-button w3-round-large w3-border w3-red w3-block") خرید
+
+        div#detail(class="border")
+          div.w3-row
+            div#payButtons(class="w3-half")
+            div#factor(class="w3-half")
+
 
 
 block script
