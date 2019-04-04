@@ -129,6 +129,12 @@ let create = async function(userid,  items, optionPram)
     
     if(option.show == false) {}
     else showFactor(userid,  {'factor': newFactor});
+
+    // analytic
+    let eventCategory = 'commerce';
+    let eventAction = `create factor`;
+    let eventLabel = `number: ${newNumber} | price: ${finalPrice}`;
+    fn.m.analytic.trackEvent(userid, eventCategory, eventAction, eventLabel);
     
     return newFactor;
 }
@@ -152,6 +158,7 @@ let getPaied = async function(userid,  fid)
     //emit success peyment
     fn.eventEmitter.emit('successPeyment', factor);
     fn.m['commerce'].showFactor(null, factor.number, {'alertoadmins': true});
+    
     // //send payment messages
     // factor.products.forEach(element => {
     //     //peform specyfic action after peyment according to product type
@@ -164,6 +171,12 @@ let getPaied = async function(userid,  fid)
     
     //analytic
     fn.m.analytic.trackItem(userid, factor.number, factor.amount);
+
+    // analytic
+    let eventCategory = 'commerce';
+    let eventAction = `paid factor`;
+    let eventLabel = `number: ${factor.number} | price: ${factor.amount}`;
+    fn.m.analytic.trackEvent(userid, eventCategory, eventAction, eventLabel);
 }
 
 let sendPaymentMessage = async function(userid,  productid)
