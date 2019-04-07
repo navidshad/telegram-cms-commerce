@@ -158,8 +158,8 @@ module.exports.commerce =
             'mess'  : 'لطفا کلید api درگاه نکست پی را ارسال کنید.',
         },
         getway_nextpay: {
-            name: 'درگاه نکست پلی',
-            mess: 'وضعیت درگاه نکست پلی را مشخص کنید.',
+            name: 'درگاه نکست پی',
+            mess: 'وضعیت درگاه نکست پی را مشخص کنید.',
             items : [
                 {'name': 'true', 'lable':'فعال'},
                 {'name': 'false', 'lable':'غیر فعال'},

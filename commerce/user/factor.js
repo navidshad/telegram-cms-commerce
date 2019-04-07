@@ -275,14 +275,37 @@ let showFactor = async function(userid,  option)
 
 async function getPayLinks(msg, factor, detailArr)
 {
+    let idpayIsActive = false;
+    let nextpayIsActive = false;
+
+    // get gates activation status
+    try {
+        let getway_idpay = fn.getModuleData('commerce', 'getway_idpay');    
+        let getway_idpayValue = (getway_idpay) ? getway_idpay.value : '...';
+        idpayIsActive = (getway_idpayValue == 'true') ? true : false;
+        
+        let getway_nextpay = fn.getModuleData('commerce', 'getway_nextpay');
+        let getway_nextpayValue = (getway_nextpay) ? getway_nextpay.value : '...';
+        nextpayIsActive = (getway_nextpayValue == 'true') ? true : false;
+    } catch (error) {
+        
+    }
+    
+
     // get idpay link
-    let idPayLink = await fn.m.commerce.gates.idpay.getPaylink(factor);
-    if(idPayLink) addPayButtons('🛒 پرداخت', idPayLink, detailArr, msg);
+    if(idpayIsActive)
+    {
+        let idPayLink = await fn.m.commerce.gates.idpay.getPaylink(factor);
+        if(idPayLink) addPayButtons('🛒 پرداخت', idPayLink, detailArr, msg);
+    }
 
     // get nextpay link
-    let price = factor.amount;
-    let nextpaylink = await fn.m.commerce.gates.nextpay.getPaylink(factor.number, price);
-    if(nextpaylink) addPayButtons('🛒 پرداخت با نکست پی', nextpaylink, detailArr, msg);
+    if(nextpayIsActive)
+    {
+        let price = factor.amount;
+        let nextpaylink = await fn.m.commerce.gates.nextpay.getPaylink(factor.number, price);
+        if(nextpaylink) addPayButtons('🛒 پرداخت با نکست پی', nextpaylink, detailArr, msg);
+    }
 
     // console.log(`get paylink for | factor:${factor.number} price:${price}|`);
     // detailArr.push([{'text': 'پرداخت با نکست پی', 'url': nextpaylink}]);
