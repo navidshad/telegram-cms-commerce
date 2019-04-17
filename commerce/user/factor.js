@@ -243,7 +243,6 @@ let showFactor = async function(userid,  option)
         //controller
         let fn_getpaid = query['commerce'] + '-' + query['user'] + '-' + query['getpaid'] + '-' + factor.id;
         let fn_delete = query['commerce'] + '-' + query['user'] + '-' + query['deletefactor'] + '-' + factor.id;
-        let fn_refresh = query['commerce'] + '-' + query['user'] + '-' + query['refreshLink'] + '-' + factor.id;
         
         let testpeymentBtn = {'text': 'پرداخت آزمایشی', 'callback_data': fn_getpaid};
         let deleteBtn = {'text': '❌', 'callback_data': fn_delete};
@@ -315,9 +314,17 @@ async function getPayLinks(msg, factor, detailArr)
     // detailArr.push([{'text': 'پرداخت با نکست پی', 'url': nextpaylink}]);
 }
 
-function addPayButtons(lable, link, detailArr, msg)
+function addPayButtons(lable, link, detailArr, msg, hasRefresh=false)
 {
-    detailArr.push([{'text': lable, 'url': link}]);
+    let fn_refresh = query['commerce'] + '-' + query['user'] + '-' + query['refreshLink'] + '-' + factor.id;
+    let refreshBtn = {'text': '🔄 ریست لینک', 'callback_data': fn_refresh};
+    
+    let row = [{'text': lable, 'url': link}];
+    
+    if(hasRefresh) row.put(refreshBtn);
+
+
+    detailArr.push(row);
     fn.editMessageReplyMarkup(
         {"inline_keyboard" : detailArr}, 
         {
