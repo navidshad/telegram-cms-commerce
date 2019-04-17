@@ -241,12 +241,11 @@ let showFactor = async function(userid,  option)
         //controller
         let fn_getpaid = query['commerce'] + '-' + query['user'] + '-' + query['getpaid'] + '-' + factor.id;
         let fn_delete = query['commerce'] + '-' + query['user'] + '-' + query['deletefactor'] + '-' + factor.id;
-        let fn_refresh = query['commerce'] + '-' + query['user'] + '-' + query['refreshLink'] + '-' + factor.id;
         
         let testpeymentBtn = {'text': 'پرداخت آزمایشی', 'callback_data': fn_getpaid};
         let deleteBtn = {'text': '❌', 'callback_data': fn_delete};
-        let refreshBtn = {'text': '🔄 ریست لینک', 'callback_data': fn_refresh};
-        let firstRow = [deleteBtn, refreshBtn];
+        
+        let firstRow = [ /*deleteBtn, refreshBtn*/ ];
 
         let testpaymentOption = fn.getModuleData('commerce', 'testpayment');
         let tpoValue = (testpaymentOption) ? testpaymentOption.value : '...';
@@ -304,16 +303,24 @@ async function getPayLinks(msg, factor, detailArr)
     {
         let price = factor.amount;
         let nextpaylink = await fn.m.commerce.gates.nextpay.getPaylink(factor.number, price);
-        if(nextpaylink) addPayButtons('🛒 پرداخت با نکست پی', nextpaylink, detailArr, msg);
+        if(nextpaylink) addPayButtons('🛒 پرداخت با نکست پی', nextpaylink, detailArr, msg, true);
     }
 
     // console.log(`get paylink for | factor:${factor.number} price:${price}|`);
     // detailArr.push([{'text': 'پرداخت با نکست پی', 'url': nextpaylink}]);
 }
 
-function addPayButtons(lable, link, detailArr, msg)
+function addPayButtons(lable, link, detailArr, msg, hasRefresh=false)
 {
-    detailArr.push([{'text': lable, 'url': link}]);
+    let fn_refresh = query['commerce'] + '-' + query['user'] + '-' + query['refreshLink'] + '-' + factor.id;
+    let refreshBtn = {'text': '🔄 ریست لینک', 'callback_data': fn_refresh};
+    
+    let row = [{'text': lable, 'url': link}];
+    
+    if(hasRefresh) row.put(refreshBtn);
+
+
+    detailArr.push(row);
     fn.editMessageReplyMarkup(
         {"inline_keyboard" : detailArr}, 
         {
