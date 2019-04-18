@@ -241,6 +241,7 @@ let showFactor = async function(userid,  option)
         //controller
         let fn_getpaid = query['commerce'] + '-' + query['user'] + '-' + query['getpaid'] + '-' + factor.id;
         let fn_delete = query['commerce'] + '-' + query['user'] + '-' + query['deletefactor'] + '-' + factor.id;
+        let fn_refresh = query['commerce'] + '-' + query['user'] + '-' + query['refreshLink'] + '-' + factor.id;
         
         let testpeymentBtn = {'text': 'پرداخت آزمایشی', 'callback_data': fn_getpaid};
         let deleteBtn = {'text': '❌', 'callback_data': fn_delete};
@@ -306,17 +307,11 @@ async function getPayLinks(msg, factor, detailArr)
     }
 }
 
-function addPayButtons(lable, link, detailArr, msg, hasRefresh=false)
+function addPayButtons(lable, link, detailArr, msg)
 {
-    let fn_refresh = query['commerce'] + '-' + query['user'] + '-' + query['refreshLink'] + '-' + factor.id;
-    let refreshBtn = {'text': '🔄 ریست لینک', 'callback_data': fn_refresh};
-    
     let row = [{'text': lable, 'url': link}];
-    
-    if(hasRefresh) row.put(refreshBtn);
-
-
     detailArr.push(row);
+
     fn.editMessageReplyMarkup(
         {"inline_keyboard" : detailArr}, 
         {
