@@ -89,16 +89,11 @@ function getSession(fnumber)
 
 async function getPaylink(factor)
 {
-    let session = await getSession(factor.number);
-
-    // create session if it doesn't existed
-    if(!session)
-    {
-        let transaction = await createTransaction(factor.userid, factor.number, factor.amount*10);
-        
-        if(transaction.id) 
-            session = await createSession(transaction, factor.number);
-    }
+    let session;// = await getSession(factor.number);
+    
+    let transaction = await createTransaction(factor.userid, factor.number, factor.amount*10);
+    if(transaction.id) 
+        session = await createSession(transaction, factor.number);
 
     if(session) return session.link;
     else return null;

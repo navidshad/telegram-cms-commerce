@@ -289,7 +289,6 @@ async function getPayLinks(msg, factor, detailArr)
     } catch (error) {
         
     }
-    
 
     // get idpay link
     if(idpayIsActive)
@@ -303,11 +302,8 @@ async function getPayLinks(msg, factor, detailArr)
     {
         let price = factor.amount;
         let nextpaylink = await fn.m.commerce.gates.nextpay.getPaylink(factor.number, price);
-        if(nextpaylink) addPayButtons('🛒 پرداخت با نکست پی', nextpaylink, detailArr, msg);
+        if(nextpaylink) addPayButtons('🛒 پرداخت با درگاه 2', nextpaylink, detailArr, msg);
     }
-
-    // console.log(`get paylink for | factor:${factor.number} price:${price}|`);
-    // detailArr.push([{'text': 'پرداخت با نکست پی', 'url': nextpaylink}]);
 }
 
 function addPayButtons(lable, link, detailArr, msg, hasRefresh=false)
