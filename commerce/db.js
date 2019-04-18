@@ -81,7 +81,7 @@ module.exports.createModels = function(mongoose)
     
     var nextpaySchema = new Schema({
         'amount'    : Number,
-        'order_id'  : String,
+        'order_id'  : Number,
         'trans_id'  : String,
         'code'      : String,
     });

@@ -87,16 +87,17 @@ function getSession(fnumber)
     return global.fn.db.idpay.findOne({'order_id': fnumber}).exec().then();
 }
 
-async function getPaylink(combinedId, factor)
+async function getPaylink(factor)
 {
     let session = await getSession(factor.number);
 
     // create session if it doesn't existed
     if(!session)
     {
-        let transaction = await createTransaction(factor.userid, combinedId, factor.amount*10);
+        let transaction = await createTransaction(factor.userid, factor.number, factor.amount*10);
         
-        if(transaction.id) session = await createSession(transaction, combinedId);
+        if(transaction.id) 
+            session = await createSession(transaction, factor.number);
     }
 
     if(session) return session.link;

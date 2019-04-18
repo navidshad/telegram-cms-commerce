@@ -1,5 +1,3 @@
-const shortid = require('shortid');
-
 //factor list
 let show = async function(userid, injectedText)
 {
@@ -247,7 +245,7 @@ let showFactor = async function(userid,  option)
         let testpeymentBtn = {'text': 'پرداخت آزمایشی', 'callback_data': fn_getpaid};
         let deleteBtn = {'text': '❌', 'callback_data': fn_delete};
         let refreshBtn = {'text': '🔄 ریست لینک', 'callback_data': fn_refresh};
-        let firstRow = [refreshBtn];
+        let firstRow = [deleteBtn, refreshBtn];
 
         let testpaymentOption = fn.getModuleData('commerce', 'testpayment');
         let tpoValue = (testpaymentOption) ? testpaymentOption.value : '...';
@@ -292,13 +290,11 @@ async function getPayLinks(msg, factor, detailArr)
         
     }
     
-    let generatedid = shortid.generate();
-    let combinedId = `${factor.number}-${generatedid}`
 
     // get idpay link
     if(idpayIsActive)
     {
-        let idPayLink = await fn.m.commerce.gates.idpay.getPaylink(combinedId, factor);
+        let idPayLink = await fn.m.commerce.gates.idpay.getPaylink(factor);
         if(idPayLink) addPayButtons('🛒 پرداخت', idPayLink, detailArr, msg);
     }
 
@@ -306,8 +302,8 @@ async function getPayLinks(msg, factor, detailArr)
     if(nextpayIsActive)
     {
         let price = factor.amount;
-        let nextpaylink = await fn.m.commerce.gates.nextpay.getPaylink(combinedId, price);
-        if(nextpaylink) addPayButtons('🛒 پرداخت با درگاه 2', nextpaylink, detailArr, msg);
+        let nextpaylink = await fn.m.commerce.gates.nextpay.getPaylink(factor.number, price);
+        if(nextpaylink) addPayButtons('🛒 پرداخت با نکست پی', nextpaylink, detailArr, msg);
     }
 
     // console.log(`get paylink for | factor:${factor.number} price:${price}|`);
