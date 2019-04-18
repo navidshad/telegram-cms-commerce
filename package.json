@@ -1,6 +1,10 @@
 {
   "name": "telegram-cms-commerce",
+<<<<<<< HEAD
   "version": "1.4.6",
+=======
+  "version": "1.3.4",
+>>>>>>> parent of 8f2365b... - removed delete button from factor.
   "description": "this is a commerce module for Telegram-CMS package on NPM.",
   "main": "index.js",
   "scripts": {
