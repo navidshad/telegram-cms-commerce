@@ -1,14 +1,11 @@
-#!/usr/bin/env node
+var app = require('../app');
+var debug = require('debug')('robot-template:server');
+var http = require('http');
+
+module.exports.app = app;
+
 module.exports.start = function(serverport)
 {
-  /**
-   * Module dependencies.
-   */
-
-  var app = require('../app');
-  var debug = require('debug')('robot-template:server');
-  var http = require('http');
-
   /**
    * Get port from environment and store in Express.
    */
