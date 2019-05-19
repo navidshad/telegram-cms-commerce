@@ -321,11 +321,11 @@ function addPayButtons(lable, link, detailArr, msg, first)
     if(first)
     {
         detailArr.push(gateRow);
-        newDetailArr = detailArr.reverse();
+        newDetailArr = detailArr;
     }
     else {
         let thereIsGateOne = false;
-        if(detailArr[0][0].text == '✅ پرداخت با درگاه شماره 1')
+        if(detailArr[detailArr.length-1][0].text == '✅ پرداخت با درگاه شماره 1')
             thereIsGateOne = true;
         else detailArr.push(gateRow);
 
