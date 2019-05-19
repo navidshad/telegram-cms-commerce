@@ -82,14 +82,9 @@ function createSession(detail, fnumber)
     return new global.fn.db.idpay(detail).save().then();
 }
 
-function getSession(fnumber)
-{
-    return global.fn.db.idpay.findOne({'order_id': fnumber}).exec().then();
-}
-
 async function getPaylink(factor)
 {
-    let session;// = await getSession(factor.number);
+    let session;
     
     let transaction = await createTransaction(factor.userid, factor.number, factor.amount*10);
     if(transaction.id) 

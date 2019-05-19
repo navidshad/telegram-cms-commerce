@@ -103,6 +103,17 @@ var query = async function(query, speratedQuery, user)
     //clear bag
     if(speratedQuery[2] === querytag['clearbag']) bag.clear(query.from.id);
 
+    // get tutorial
+    if(speratedQuery[2] === querytag['tutorial']) 
+    {
+        let tutorialPostOption = fn.getModuleData('commerce', 'tutorialPost');
+        let tutorialPost = (tutorialPostOption) ? tutorialPostOption.value : null;
+
+        query.message.from = user;
+
+        if(tutorialPost) fn.m.post.user.show(query.message, tutorialPost, user);
+    }
+
     //add prodcut to bag
     if(speratedQuery[2] === querytag['addToBag']) {
         var type = speratedQuery[last-1];

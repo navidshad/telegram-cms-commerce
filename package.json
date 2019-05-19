@@ -1,6 +1,6 @@
 {
   "name": "telegram-cms-commerce",
-  "version": "1.4.9",
+  "version": "1.5.0",
   "description": "this is a commerce module for Telegram-CMS package on NPM.",
   "main": "index.js",
   "scripts": {

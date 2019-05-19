@@ -240,37 +240,40 @@ let showFactor = async function(userid,  option)
     {
         //controller
         let fn_getpaid = query['commerce'] + '-' + query['user'] + '-' + query['getpaid'] + '-' + factor.id;
-        let fn_delete = query['commerce'] + '-' + query['user'] + '-' + query['deletefactor'] + '-' + factor.id;
+        //let fn_delete = query['commerce'] + '-' + query['user'] + '-' + query['deletefactor'] + '-' + factor.id;
         let fn_refresh = query['commerce'] + '-' + query['user'] + '-' + query['refreshLink'] + '-' + factor.id;
+        let fn_tutorial = query['commerce'] + '-' + query['user'] + '-' + query['tutorial'];
         
         let testpeymentBtn = {'text': 'پرداخت آزمایشی', 'callback_data': fn_getpaid};
-        let deleteBtn = {'text': '❌', 'callback_data': fn_delete};
-        let refreshBtn = {'text': '🔄 ریست لینک', 'callback_data': fn_refresh};
-        let firstRow = [deleteBtn, refreshBtn];
+        let refreshBtn = {'text': '🔄دریافت لینک جدید پرداخت', 'callback_data': fn_refresh};
+        let tutorialBtn = {'text': '🎬 راهنمای خرید اشتراک', 'callback_data': fn_tutorial};
+        //let deleteBtn = {'text': '❌', 'callback_data': fn_delete};
+        //let firstRow = [deleteBtn, refreshBtn];
 
+        // test payment
         let testpaymentOption = fn.getModuleData('commerce', 'testpayment');
         let tpoValue = (testpaymentOption) ? testpaymentOption.value : '...';
         let testpayment = (tpoValue == 'true') ? true : false;
+        if(testpayment) detailArr.push([testpeymentBtn])
 
-        if(testpayment) firstRow.push(testpeymentBtn)
-        detailArr.push(firstRow);
+        // tutorial post
+        let tutorialPostOption = fn.getModuleData('commerce', 'tutorialPost');
+        let tutorialPost = (tutorialPostOption) ? tutorialPostOption.value : null;
+        if(tutorialPost != null) detailArr.push([tutorialBtn]);
 
-        //gates buttons
-        // let price = factor.amount;
-        // let nextpaylink = await fn.m.commerce.gates.nextpay.getPaylink(factor.number, price);
-        // console.log(`get paylink for | factor:${factor.number} price:${price}|`);
-        // detailArr.push([{'text': 'پرداخت با نکست پی', 'url': nextpaylink}]);
+        // refresh link
+        detailArr.push([refreshBtn]);
     }
     
-    mess += '\n\n' + fn.mstr['commerce'].mess.nexpayNote;
+    mess += '\n\n' + fn.mstr['commerce'].mess.gatesNote;
     
     //sned
     let msg = await global.fn.sendMessage(userid, mess, {
         'parse_mode':'HTML',
-        "reply_markup" : {"inline_keyboard" : detailArr}
+        "reply_markup" : {"inline_keyboard" : detailArr.reverse()}
     });
 
-    if(!factor.ispaid) getPayLinks(msg, factor, detailArr);
+    if(!factor.ispaid) getPayLinks(msg, factor, detailArr.reverse());
 }
 
 async function getPayLinks(msg, factor, detailArr)
@@ -287,6 +290,7 @@ async function getPayLinks(msg, factor, detailArr)
         let getway_nextpay = fn.getModuleData('commerce', 'getway_nextpay');
         let getway_nextpayValue = (getway_nextpay) ? getway_nextpay.value : '...';
         nextpayIsActive = (getway_nextpayValue == 'true') ? true : false;
+        
     } catch (error) {
         
     }
@@ -295,7 +299,7 @@ async function getPayLinks(msg, factor, detailArr)
     if(idpayIsActive)
     {
         let idPayLink = await fn.m.commerce.gates.idpay.getPaylink(factor);
-        if(idPayLink) addPayButtons('🛒 پرداخت', idPayLink, detailArr, msg);
+        if(idPayLink) addPayButtons('✅ پرداخت با درگاه شماره 1', idPayLink, detailArr, msg, true);
     }
 
     // get nextpay link
@@ -303,17 +307,42 @@ async function getPayLinks(msg, factor, detailArr)
     {
         let price = factor.amount;
         let nextpaylink = await fn.m.commerce.gates.nextpay.getPaylink(factor.number, price);
-        if(nextpaylink) addPayButtons('🛒 پرداخت با درگاه 2', nextpaylink, detailArr, msg);
+        if(nextpaylink) addPayButtons('✅ پرداخت با درگاه شماره 2', nextpaylink, detailArr, msg, false);
     }
 }
 
-function addPayButtons(lable, link, detailArr, msg)
+function addPayButtons(lable, link, detailArr, msg, first)
 {
-    let row = [{'text': lable, 'url': link}];
-    detailArr.push(row);
+    let gateRow = [{'text': lable, 'url': link}];
+
+    newDetailArr = [];
+    
+    // order gates by custom
+    if(first)
+    {
+        detailArr.push(gateRow);
+        newDetailArr = detailArr.reverse();
+    }
+    else {
+        let thereIsGateOne = false;
+        if(detailArr[0][0].text == '✅ پرداخت با درگاه شماره 1')
+            thereIsGateOne = true;
+        else detailArr.push(gateRow);
+
+        for (let i = 0; i < detailArr.length; i++) 
+        {
+            const oldRow = detailArr[i];
+            newDetailArr.push(oldRow);
+
+            if(thereIsGateOne && i == detailArr.length-2) 
+                newDetailArr.push(gateRow);
+        }
+
+        newDetailArr = newDetailArr.reverse();
+    }
 
     fn.editMessageReplyMarkup(
-        {"inline_keyboard" : detailArr}, 
+        {"inline_keyboard" : newDetailArr}, 
         {
             'chat_id'   : msg.chat.id,
             'message_id': msg.message_id,

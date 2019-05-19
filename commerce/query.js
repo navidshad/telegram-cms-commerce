@@ -29,7 +29,9 @@ var routting = function(query, speratedQuery, user, mName)
     var qt = fn.mstr.commerce.query;
 
     //remove query message
-    if(speratedQuery[2] !== qt['itemsdetail'] && speratedQuery[2] !== qt['postalInfo']) 
+    if(speratedQuery[2] !== qt['itemsdetail'] && 
+        speratedQuery[2] !== qt['postalInfo'] &&
+        speratedQuery[2] !== qt['tutorial']) 
         global.robot.bot.deleteMessage(query.message.chat.id, query.message.message_id);
 
     //admin settings
